@@ -87,10 +87,10 @@ for Y_dirname in os.listdir('./'):
         #print(Y_dirname)
         if os.listdir(Y_dirname):
             print Y_dirname+'/'
-            
+            Y_counts = np.zeros(shape=(Xbins.shape[0]-1,Ybins.shape[0]-1))
             for M_dirname in os.listdir(Y_dirname):
                 if os.path.isdir('./'+Y_dirname+'/'+M_dirname) and M_dirname[0]!='.':
-
+                    
                     if os.listdir('./'+Y_dirname+'/'+M_dirname):
                         print '\t'+M_dirname+'/'
                         
@@ -230,8 +230,9 @@ for Y_dirname in os.listdir('./'):
                         #write monthly-averaged data to file
                         mean_file.write('monthly mean SST,'+str(ma.average(month_mean_T))+','+str(ma.std(month_mean_T)))
                         #%
-                        
                         MMEAN = ma.average(month_AVG,axis=0)
+                        ###
+                        
                         
                         #prepare figure
                         plt.close('all')
@@ -289,9 +290,12 @@ for Y_dirname in os.listdir('./'):
                         #
                         plt.colorbar(im, cax=cax,label='points count')
                         #save figure
-                        plt.savefig(path+'FIGURES/monthly_mean_SST_2dhist.png',dpi=defdpi)
+                        plt.savefig(path+'FIGURES/monthly_available_SST_2dhist_'+path[-3:-1]+'.png',dpi=defdpi)
                         #------------------------------------------------------
+                        Y_counts = np.add(Y_counts,counts)
+                        counts.dump(path+'DATA/monthly_2dhist_'+path[-3:-1]+'.dat')
                         
+                        #---------------
                         #close data file
                         mean_file.close()
                         
@@ -303,6 +307,29 @@ for Y_dirname in os.listdir('./'):
                         #=========================== MAIN CODE FINISH=====================
                     else:
                         print '\t'+M_dirname+'/ is empty!'
+            #--- plot Y_counts then dump
+            plt.close('all')
+            plt.figure(figsize=(8,10),dpi=defdpi)
+            ax = plt.gca()
+            #prepare map
+            mymap.drawcoastlines(ax=ax,zorder=500)
+            mymap.drawparallels(pars, dashes=(1, 1), 
+                                    linewidth=0.15, labels=parslabels, ax=ax,zorder=501)
+            mymap.drawmeridians(mers, dashes=(1, 1), 
+                                    linewidth=0.15, labels=merslabels, ax=ax,zorder=501)
+            #do plot   
+            im = mymap.pcolormesh(XMAP,YMAP,Y_counts,cmap='Blues')
+            #plot makeup
+            divider = make_axes_locatable(ax)
+            cax = divider.append_axes("right", size="5%", pad=0.05)
+            plt.colorbar(im, cax=cax,label='points count')
+            #save figure
+            plt.savefig('./'+Y_dirname+'/available_SST_2dhist.png',dpi=defdpi)
+            #------------------------------------------------------
+            Y_counts.dump('./'+Y_dirname+'/yearly_2dhist.dat')
+            #Y_counts = np.add(Y_counts,counts)
+            
+            #----
         else:
             print Y_dirname + '/ is empty!'
         #path = './'+filename
