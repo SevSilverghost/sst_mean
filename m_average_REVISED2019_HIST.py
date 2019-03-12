@@ -128,6 +128,7 @@ for Y_dirname in os.listdir('./'):
                                 long_data = data_file.groups['navigation_data'].variables['longitude']
                                 lat_data = data_file.groups['navigation_data'].variables['latitude']
                                 mask_data = data_file.groups['geophysical_data'].variables['flags_sst']
+                                l2_flags_data = data_file.groups['geophysical_data'].variables['l2_flags']
                                 
                                 #tmp empty vars
                                 LON_subset = []
@@ -140,8 +141,14 @@ for Y_dirname in os.listdir('./'):
                         
                                     LONindices = (long_data[line,:] > long_min) & (long_data[line,:] < long_max)
                                     LATindices = (lat_data[line,:] > lat_min) & (lat_data[line,:] < lat_max)
+                                    no_STRAYLIGHT_indices = ((l2_flags_data[0] & (1<<8))==0)
+                                    # include LON LAT points inside the area of interest
                                     DATAindices = np.logical_and(LONindices,LATindices)
+                                    # exclude masked points
                                     DATAindices = np.logical_and(DATAindices,mask_data[line].mask)
+                                    # exclude STRAYLIGHT
+                                    DATAindices = np.logical_and(DATAindices,no_STRAYLIGHT_indices)
+                                    #
                                     if np.any(DATAindices):
                                         LON_subset.append(np.array(long_data[line,DATAindices],dtype=np.float64))
                                         LAT_subset.append(np.array(lat_data[line,DATAindices],dtype=np.float64))
@@ -150,7 +157,7 @@ for Y_dirname in os.listdir('./'):
                                 #---
                                 #prepare data containers
                                 AVG = ma.zeros(shape=(Xbins.shape[0]-1,Ybins.shape[0]-1))
-                        
+                                
                                 #...
                                 
                                 #main cycle of averaging to bins
