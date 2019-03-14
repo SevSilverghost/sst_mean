@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on 02.10.2018
+Modified on March 2019
 
 Purpose: 1) to read a set of NETCDF files with SST data from one folder,
          presumed to be for one month.
@@ -229,6 +230,8 @@ for filename in os.listdir(path):
         invMMM_c[58:65,30] = False
         invMMM_c[59:65,31] = False
         invMMM_c[60:65,32] = False
+        invMMM_c[62,33] = True
+        invMMM_c[62,34] = True
         
         resMMM_v = np.logical_or(MMM,invMMM_v)
         resMMM_c = np.logical_or(MMM,invMMM_c)
