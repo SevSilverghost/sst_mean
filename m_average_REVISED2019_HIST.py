@@ -3,7 +3,7 @@
 """
 Created on Fri Aug 31 11:27:13 2018
 Modified on Feb 27 2019
-Modified on March 04 2019
+Modified on March 2019
 
 
 Purpose: 1) to read a set of NETCDF files with SST data from all folders
@@ -87,7 +87,7 @@ for Y_dirname in os.listdir('./'):
         #print(Y_dirname)
         if os.listdir(Y_dirname):
             print Y_dirname+'/'
-            Y_counts = np.zeros(shape=(Xbins.shape[0]-1,Ybins.shape[0]-1))
+            Y_counts = np.ma.zeros(shape=(Xbins.shape[0]-1,Ybins.shape[0]-1))
             for M_dirname in os.listdir(Y_dirname):
                 if os.path.isdir('./'+Y_dirname+'/'+M_dirname) and M_dirname[0]!='.':
                     
@@ -220,6 +220,8 @@ for Y_dirname in os.listdir('./'):
                                 MMM[58:65,30] = True
                                 MMM[59:65,31] = True
                                 MMM[60:65,32] = True
+                                MMM[62,33] = True
+                                MMM[62,34] = True
                                 
                                 AVG = np.ma.masked_where(MMM, AVG)
                                 
@@ -322,6 +324,41 @@ for Y_dirname in os.listdir('./'):
                         #h = plt.hist2d(FLAT_LON_subset,FLAT_LAT_subset,bins=[Xbins,Ybins],cmap='jet')
                         counts, xedges, yedges = np.histogram2d(FLAT_LON_subset,FLAT_LAT_subset,bins=[Xbins,Ybins])
                         
+                        # mask counts first
+                        # mask the lagoons ----------------------------
+                        counts = np.ma.masked_where(counts==0,counts)
+                        MMM = counts.mask
+                        # Vistula
+                        MMM[26,6] = True
+                        MMM[25:30,7] = True
+                        MMM[27:33,8] = True
+                        MMM[30:34,9] = True
+                        MMM[32:35,10] = True
+                        MMM[34:38,11] = True
+                        MMM[35:39,12] = True
+                        MMM[36:42,13] = True
+                        MMM[37:44,14] = True
+                        MMM[39:41,15] = True
+                        MMM[42:46,15] = True
+                        MMM[39,16] = True
+                        # Curonian
+                        MMM[49:65,21] = True
+                        MMM[49:65,22] = True
+                        MMM[49:65,23] = True
+                        MMM[50:65,24] = True
+                        MMM[52:65,25] = True
+                        MMM[54:65,26] = True
+                        MMM[55:65,27] = True
+                        MMM[56:65,28] = True
+                        MMM[57:65,29] = True
+                        MMM[58:65,30] = True
+                        MMM[59:65,31] = True
+                        MMM[60:65,32] = True
+                        MMM[62,33] = True
+                        MMM[62,34] = True
+                        
+                        counts = np.ma.masked_where(MMM, counts)
+                        
                         #XMAP,YMAP = mymap(XC,YC) #no need to repeat
                         im = mymap.pcolormesh(XMAP,YMAP,counts,cmap='Blues')
                         
@@ -334,7 +371,7 @@ for Y_dirname in os.listdir('./'):
                         #save figure
                         plt.savefig(path+'FIGURES/monthly_available_SST_2dhist_'+path[-3:-1]+'.png',dpi=defdpi)
                         #------------------------------------------------------
-                        Y_counts = np.add(Y_counts,counts)
+                        Y_counts = np.ma.add(Y_counts,counts)
                         counts.dump(path+'DATA/monthly_2dhist_'+path[-3:-1]+'.dat')
                         
                         #---------------
@@ -349,7 +386,10 @@ for Y_dirname in os.listdir('./'):
                         #=========================== MAIN CODE FINISH=====================
                     else:
                         print '\t'+M_dirname+'/ is empty!'
+                        
+            
             #--- plot Y_counts then dump
+            #
             plt.close('all')
             plt.figure(figsize=(8,10),dpi=defdpi)
             ax = plt.gca()
