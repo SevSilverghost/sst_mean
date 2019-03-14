@@ -192,6 +192,40 @@ for Y_dirname in os.listdir('./'):
                                 #YC = ma.masked_where(AVG>=1e+19,YC)
                                 #---
                                 
+                                # mask the lagoons ----------------------------
+                                MMM = AVG.mask
+                                # Vistula
+                                MMM[26,6] = True
+                                MMM[25:30,7] = True
+                                MMM[27:33,8] = True
+                                MMM[30:34,9] = True
+                                MMM[32:35,10] = True
+                                MMM[34:38,11] = True
+                                MMM[35:39,12] = True
+                                MMM[36:42,13] = True
+                                MMM[37:44,14] = True
+                                MMM[39:41,15] = True
+                                MMM[42:46,15] = True
+                                MMM[39,16] = True
+                                # Curonian
+                                MMM[49:65,21] = True
+                                MMM[49:65,22] = True
+                                MMM[49:65,23] = True
+                                MMM[50:65,24] = True
+                                MMM[52:65,25] = True
+                                MMM[54:65,26] = True
+                                MMM[55:65,27] = True
+                                MMM[56:65,28] = True
+                                MMM[57:65,29] = True
+                                MMM[58:65,30] = True
+                                MMM[59:65,31] = True
+                                MMM[60:65,32] = True
+                                
+                                AVG = np.ma.masked_where(MMM, AVG)
+                                
+                                
+                                #----------------------------------------------
+                                
                                 
                                 
                                 #prepare current figure
