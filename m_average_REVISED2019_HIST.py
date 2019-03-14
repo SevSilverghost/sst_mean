@@ -141,13 +141,14 @@ for Y_dirname in os.listdir('./'):
                         
                                     LONindices = (long_data[line,:] > long_min) & (long_data[line,:] < long_max)
                                     LATindices = (lat_data[line,:] > lat_min) & (lat_data[line,:] < lat_max)
-                                    no_STRAYLIGHT_indices = ((l2_flags_data[0] & (1<<8))==0)
+                                    no_STRAYLIGHT_indices = ((l2_flags_data[line] & (1<<8))==0)
                                     # include LON LAT points inside the area of interest
                                     DATAindices = np.logical_and(LONindices,LATindices)
-                                    # exclude masked points
-                                    DATAindices = np.logical_and(DATAindices,mask_data[line].mask)
                                     # exclude STRAYLIGHT
                                     DATAindices = np.logical_and(DATAindices,no_STRAYLIGHT_indices)
+                                    # exclude masked points
+                                    DATAindices = np.logical_and(DATAindices,mask_data[line].mask)
+                                    
                                     #
                                     if np.any(DATAindices):
                                         LON_subset.append(np.array(long_data[line,DATAindices],dtype=np.float64))
