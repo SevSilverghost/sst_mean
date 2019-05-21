@@ -124,11 +124,15 @@ for Y_dirname in os.listdir('./'):
                                 
                                 #---
                                 #get the data
-                                sst_data = data_file.groups['geophysical_data'].variables['sst']
-                                long_data = data_file.groups['navigation_data'].variables['longitude']
-                                lat_data = data_file.groups['navigation_data'].variables['latitude']
-                                mask_data = data_file.groups['geophysical_data'].variables['flags_sst']
-                                l2_flags_data = data_file.groups['geophysical_data'].variables['l2_flags']
+                                try:
+                                    sst_data = data_file.groups['geophysical_data'].variables['sst']
+                                    long_data = data_file.groups['navigation_data'].variables['longitude']
+                                    lat_data = data_file.groups['navigation_data'].variables['latitude']
+                                    mask_data = data_file.groups['geophysical_data'].variables['flags_sst']
+                                    l2_flags_data = data_file.groups['geophysical_data'].variables['l2_flags']
+                                except KeyError as e:
+                                    print 'I got a KeyError - reason "%s"' % str(e)
+                                    continue
                                 
                                 #tmp empty vars
                                 LON_subset = []
@@ -294,7 +298,7 @@ for Y_dirname in os.listdir('./'):
                         
                         #do plot
                         XMAP,YMAP = mymap(XC,YC)
-                        im = mymap.pcolormesh(XMAP,YMAP,MMEAN,cmap='jet',vmin=np.min(AVG), vmax=np.max(AVG))
+                        im = mymap.pcolormesh(XMAP,YMAP,MMEAN,cmap='jet',vmin=np.min(MMEAN), vmax=np.max(MMEAN))
                         
                         divider = make_axes_locatable(ax)
                         cax = divider.append_axes("right", size="5%", pad=0.05)
@@ -371,7 +375,8 @@ for Y_dirname in os.listdir('./'):
                         #save figure
                         plt.savefig(path+'FIGURES/monthly_available_SST_2dhist_'+path[-3:-1]+'.png',dpi=defdpi)
                         #------------------------------------------------------
-                        Y_counts = np.ma.add(Y_counts,counts)
+                        Y_counts = np.ma.add(Y_counts.data,counts.data)
+                        Y_counts.mask = np.logical_and(Y_counts.mask,counts.mask)
                         counts.dump(path+'DATA/monthly_2dhist_'+path[-3:-1]+'.dat')
                         
                         #---------------
