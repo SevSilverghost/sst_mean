@@ -47,6 +47,49 @@ XC = np.zeros(shape=(Xbins.shape[0]-1,Ybins.shape[0]-1))
 YC = np.zeros(shape=(Xbins.shape[0]-1,Ybins.shape[0]-1))
 WGHTS = np.cos(np.radians(YC))
 
+# Create mask
+MMM = np.zeros(shape=(Xbins.shape[0]-1,Ybins.shape[0]-1),dtype=bool)
+# Vistula
+MMM[26,6] = True
+MMM[25:30,7] = True
+MMM[27:34,8] = True
+MMM[30:35,9] = True
+MMM[32:36,10] = True
+MMM[34:39,11] = True
+MMM[35:39,12] = True
+MMM[36:43,13] = True
+MMM[37:45,14] = True
+MMM[38:41,15] = True
+MMM[41:47,15] = True
+MMM[39:41,16] = True
+MMM[43:45,16] = True
+MMM[46:48,16] = True
+MMM[39,17] = True
+# Curonian
+MMM[49:65,21] = True
+MMM[49:65,22] = True
+MMM[49:65,23] = True
+MMM[50:65,24] = True
+MMM[52:65,25] = True
+MMM[54:65,26] = True
+MMM[55:65,27] = True
+MMM[56:65,28] = True
+MMM[57:65,29] = True
+MMM[58:65,30] = True
+MMM[59:65,31] = True
+MMM[60:65,32] = True
+MMM[62:65,33] = True
+MMM[62:65,34] = True
+MMM[63:65,35] = True
+#Lakes
+MMM[65:79,:] = True
+MMM[:,0:8] = True
+MMM[1,17] = True
+#Extra
+MMM[59:62,50:53] = True
+
+#---
+
 
 #calc bins centers
 for i,x in enumerate(Xbins[:-1]):
@@ -197,39 +240,7 @@ for Y_dirname in os.listdir('./'):
                                 #---
                                 
                                 # mask the lagoons ----------------------------
-                                MMM = AVG.mask
-                                # Vistula
-                                MMM[26,6] = True
-                                MMM[25:30,7] = True
-                                MMM[27:33,8] = True
-                                MMM[30:34,9] = True
-                                MMM[32:35,10] = True
-                                MMM[34:38,11] = True
-                                MMM[35:39,12] = True
-                                MMM[36:42,13] = True
-                                MMM[37:44,14] = True
-                                MMM[39:41,15] = True
-                                MMM[42:46,15] = True
-                                MMM[39,16] = True
-                                # Curonian
-                                MMM[49:65,21] = True
-                                MMM[49:65,22] = True
-                                MMM[49:65,23] = True
-                                MMM[50:65,24] = True
-                                MMM[52:65,25] = True
-                                MMM[54:65,26] = True
-                                MMM[55:65,27] = True
-                                MMM[56:65,28] = True
-                                MMM[57:65,29] = True
-                                MMM[58:65,30] = True
-                                MMM[59:65,31] = True
-                                MMM[60:65,32] = True
-                                MMM[62,33] = True
-                                MMM[62,34] = True
-                                
-                                AVG = np.ma.masked_where(MMM, AVG)
-                                
-                                
+                                AVG = np.ma.masked_where(np.logical_or(AVG.mask,MMM), AVG)
                                 #----------------------------------------------
                                 
                                 
@@ -331,37 +342,7 @@ for Y_dirname in os.listdir('./'):
                         # mask counts first
                         # mask the lagoons ----------------------------
                         counts = np.ma.masked_where(counts==0,counts)
-                        MMM = counts.mask
-                        # Vistula
-                        MMM[26,6] = True
-                        MMM[25:30,7] = True
-                        MMM[27:33,8] = True
-                        MMM[30:34,9] = True
-                        MMM[32:35,10] = True
-                        MMM[34:38,11] = True
-                        MMM[35:39,12] = True
-                        MMM[36:42,13] = True
-                        MMM[37:44,14] = True
-                        MMM[39:41,15] = True
-                        MMM[42:46,15] = True
-                        MMM[39,16] = True
-                        # Curonian
-                        MMM[49:65,21] = True
-                        MMM[49:65,22] = True
-                        MMM[49:65,23] = True
-                        MMM[50:65,24] = True
-                        MMM[52:65,25] = True
-                        MMM[54:65,26] = True
-                        MMM[55:65,27] = True
-                        MMM[56:65,28] = True
-                        MMM[57:65,29] = True
-                        MMM[58:65,30] = True
-                        MMM[59:65,31] = True
-                        MMM[60:65,32] = True
-                        MMM[62,33] = True
-                        MMM[62,34] = True
-                        
-                        counts = np.ma.masked_where(MMM, counts)
+                        counts = np.ma.masked_where(np.logical_or(counts.mask,MMM), counts)
                         
                         #XMAP,YMAP = mymap(XC,YC) #no need to repeat
                         im = mymap.pcolormesh(XMAP,YMAP,counts,cmap='Blues')
