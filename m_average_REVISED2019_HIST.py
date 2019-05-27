@@ -3,7 +3,7 @@
 """
 Created on Fri Aug 31 11:27:13 2018
 Modified on Feb 27 2019
-Modified on March 2019
+Modified on MAY 2019
 
 
 Purpose: 1) to read a set of NETCDF files with SST data from all folders
@@ -32,6 +32,15 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 #seaborn.set()
 start = time.time()
 #%%
+'''
+def check_neighbours(ARR,IND_X,IND_Y):
+    RES = ARR[IND_X-1,IND_Y] or ARR[IND_X+1,IND_Y] \
+            or ARR[IND_X,IND_Y-1] or ARR[IND_X,IND_Y+1] \
+            or ARR[IND_X-1,IND_Y-1] or ARR[IND_X+1,IND_Y+1] \
+            or ARR[IND_X-1,IND_Y+1] or ARR[IND_X+1,IND_Y-1]
+    return RES
+'''
+#%%
 #set the limits of the polygon
 long_min = 18.0
 long_max = 22.0
@@ -48,6 +57,9 @@ YC = np.zeros(shape=(Xbins.shape[0]-1,Ybins.shape[0]-1))
 WGHTS = np.cos(np.radians(YC))
 
 # Create mask
+MMM = np.load('/home/andrei/sst_mean/LAND_MASK.npy')
+
+'''
 MMM = np.zeros(shape=(Xbins.shape[0]-1,Ybins.shape[0]-1),dtype=bool)
 # Vistula
 MMM[26,6] = True
@@ -87,9 +99,40 @@ MMM[:,0:8] = True
 MMM[1,17] = True
 #Extra
 MMM[59:62,50:53] = True
+MMM[59,58] =  True
+MMM[58,58] = True
+#Hel Spit
+MMM[7,18]=True
+MMM[9,16:18]=True
+MMM[8,16]=True
+MMM[7,18]=True
+MMM[12,16]=True
+MMM[13,16]=True
+MMM[14,15]=True
+MMM[15,14]=True
+MMM[11,17]=True
+MMM[10,17]=True
+'''
 
+
+
+#%%
+'''
+TMP = np.array(MMM) #store the original mask
+for IND_X, row in enumerate(TMP[1:-1]):
+    for IND_Y, elem in enumerate(row[1:-1]):
+        if check_neighbours(MMM,IND_X+1,IND_Y+1):
+            # if an element has at least one masked neighbour then
+            # mask it in the copy
+            TMP[IND_X+1,IND_Y+1] = True
+            #print IND_X, IND_Y, elem
+            #print '!!!'
+        #print check_neighbours(MMM,IND_X,IND_Y)
+        
+MMM = np.array(TMP)
+'''
+#%%
 #---
-
 
 #calc bins centers
 for i,x in enumerate(Xbins[:-1]):
@@ -244,6 +287,8 @@ for Y_dirname in os.listdir('./'):
                                 #----------------------------------------------
                                 
                                 
+                                #%%
+                                
                                 
                                 #prepare current figure
                                 plt.close('all')
@@ -343,7 +388,8 @@ for Y_dirname in os.listdir('./'):
                         # mask the lagoons ----------------------------
                         counts = np.ma.masked_where(counts==0,counts)
                         counts = np.ma.masked_where(np.logical_or(counts.mask,MMM), counts)
-                        
+                                
+                        #%%
                         #XMAP,YMAP = mymap(XC,YC) #no need to repeat
                         im = mymap.pcolormesh(XMAP,YMAP,counts,cmap='Blues')
                         
