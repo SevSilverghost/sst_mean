@@ -169,7 +169,7 @@ mymap = Basemap(llcrnrlon=long_min,
 
 
 for Y_dirname in os.listdir('./'):
-    if os.path.isdir(Y_dirname) and Y_dirname[0]!='.':
+    if os.path.isdir(Y_dirname) and Y_dirname[0]!='.' and Y_dirname != 'FIGURES':
         #print(Y_dirname)
         if os.listdir(Y_dirname):
             print Y_dirname+'/'
@@ -403,7 +403,7 @@ for Y_dirname in os.listdir('./'):
                         plt.savefig(path+'FIGURES/monthly_available_SST_2dhist_'+path[-3:-1]+'.png',dpi=defdpi)
                         #------------------------------------------------------
                         Y_counts = np.ma.add(Y_counts.data,counts.data)
-                        Y_counts.mask = np.logical_and(Y_counts.mask,counts.mask)
+                        Y_counts.mask = np.logical_or(Y_counts.mask,counts.mask)
                         counts.dump(path+'DATA/monthly_2dhist_'+path[-3:-1]+'.dat')
                         
                         #---------------

@@ -166,7 +166,7 @@ for YEAR in np.arange(2003,2017+1,1):
 #%%
 
 TOTAL_MEAN = ma.average(TOTAL_MEAN,axis=0)
-        
+ #%%       
 plt.close('all')
 plt.figure(figsize=(8,10),dpi=defdpi)
 ax = plt.gca()
@@ -182,7 +182,7 @@ mymap.drawmeridians(mers, dashes=(1, 1),
 
 #do plot
 XMAP,YMAP = mymap(XC,YC)
-im = mymap.pcolormesh(XMAP,YMAP,TOTAL_MEAN,cmap='jet',vmin=10, vmax=15)
+im = mymap.pcolormesh(XMAP,YMAP,TOTAL_MEAN,cmap='jet',vmin=10, vmax=12)
 
 divider = make_axes_locatable(ax)
 cax = divider.append_axes("right", size="5%", pad=0.05)
